@@ -76,6 +76,46 @@ export class Graph implements Serializable {
         this.edges.push(e);
     }
 
+    /**
+     * containsVertex()
+     *
+     * O(n) complexity where n=|vertices|
+     *
+     * Returns true if a vertex with a matching id is contained in the vertex array
+     * of this graph.
+     *
+     * @param {Vertex} v Vertex to check
+     * @returns {boolean} Is vertex in graph?
+     */
+    public containsVertex(v: Vertex) {
+        for (let i = 0; i<this.vertices.length; i++) {
+            if (this.vertices[i].getId() === v.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * containsEdge()
+     *
+     * O(n) complexity where n=|edges|
+     *
+     * Returns true if a edge with a matching id is contained in the edge array
+     * of this graph.
+     *
+     * @param {Edge} e Edge to check
+     * @returns {boolean} Is edge in graph?
+     */
+    public containsEdge(e: Edge) {
+        for (let i = 0; i<this.edges.length; i++) {
+            if (this.edges[i].getId() === e.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     constructor(vertices: Array<Vertex>, edges: Array<Edge>) {
         this.edges = edges;
         this.vertices = vertices;

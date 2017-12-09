@@ -36,7 +36,7 @@ export abstract class ShortestPathFindingAlgorithm extends PathFindingAlgorithm 
      * with the lowest cost.
      *
      * Should throw an error if to is not in g or if from is not in g.
-     * Should return null if no path exists.
+     * Returns empty graph if no path exists.
      *
      * @param {Vertex} to target vertex; the path will end at this vertex.
      * @param {Vertex} from start vertex; the path will start at this vertex.
@@ -48,5 +48,9 @@ export abstract class ShortestPathFindingAlgorithm extends PathFindingAlgorithm 
     constructor(name: string, complexityOrder: string, costFunction: CostFunction) {
         super(name, complexityOrder);
         this.costFunction = costFunction;
+    }
+
+    protected getCostFunction() : CostFunction {
+        return this.costFunction;
     }
 }

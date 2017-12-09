@@ -8,7 +8,6 @@ import {CurrencyVertex} from "./FinancialGraphs/CurrencyVertex";
 import {CurrencyUSD} from "./Currencies/CurrencyUSD";
 import {CurrencyETH} from "./Currencies/CurrencyETH";
 import {CurrencyBTC} from "./Currencies/CurrencyBTC";
-import {CurrencyEdgeFactory} from "./FinancialGraphs/CurrencyEdgeFactory";
 import {KrakenEdgeFactory} from "./FinancialGraphs/KrakenEdgeFactory";
 import {GdaxExchange} from "./Exchanges/GdaxExchange";
 import {GdaxEdgeFactory} from "./FinancialGraphs/GdaxEdgeFactory";
@@ -16,6 +15,8 @@ import {Graph} from "./Graphs/Graph";
 import {BankExchange} from "./Exchanges/BankExchange";
 import {BankTransferEdgeFactory} from "./FinancialGraphs/BankTransferEdgeFactory";
 import {CryptoTransferEdgeFactory} from "./FinancialGraphs/CryptoTransferEdgeFactory";
+import {DijikstrasShortestPathFindingAlgorithm} from "./GraphAlgorithms/DijikstrasShortestPathFindingAlgorithm";
+import {EqualCostFunction} from "./GraphAlgorithms/CostFunctions/EqualCostFunction";
 
 //Time constants
 const ONE_SECOND = 1;
@@ -24,20 +25,19 @@ const ONE_HOUR = 60 * ONE_MINUTE;
 const ONE_DAY = 24 * ONE_HOUR;
 const THREE_DAYS = 3 * ONE_DAY;
 
-//Initialize Banks
-let wellsFargo = new BankExchange('Wells Fargo');
-let charlesSchwab = new BankExchange('Charles Schwab');
-
-//Initialize Exchanges
-let kraken = new KrakenExchange('public','public');
-let gdax = new GdaxExchange();
-
 
 //Initialize Currencies
 let usd = new CurrencyUSD();
 let eth = new CurrencyETH();
 let btc = new CurrencyBTC();
 
+//Initialize Banks
+let wellsFargo = new BankExchange('Wells Fargo', usd);
+let charlesSchwab = new BankExchange('Charles Schwab', usd);
+
+//Initialize Exchanges
+let kraken = new KrakenExchange('public','public');
+let gdax = new GdaxExchange();
 
 //Initialize Nodes
 let krakenUsd = new CurrencyVertex(usd, kraken);
@@ -57,19 +57,19 @@ let vertices = [
 ];
 
 //Initialize Edge Factories
-let krakenUsdEthFactory = new KrakenEdgeFactory(kraken, krakenUsd, krakenEth, true);
-let krakenEthUsdFactory = new KrakenEdgeFactory(kraken, krakenEth, krakenUsd, false);
-let krakenUsdBtcFactory = new GdaxEdgeFactory(kraken, krakenUsd, krakenBtc, true);
-let krakenBtcUsdFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenUsd, false);
-let krakenEthBtcFactory = new GdaxEdgeFactory(kraken, krakenEth, krakenBtc, false);
-let krakenBtcEthFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenEth, true);
-
-let gdaxUsdEthFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxEth, true);
-let gdaxEthUsdFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxUsd, false);
-let gdaxUsdBtcFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxBtc, true);
-let gdaxBtcUsdFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxUsd, false);
-let gdaxEthBtcFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxBtc, false);
-let gdaxBtcEthFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxEth, true);
+// let krakenUsdEthFactory = new KrakenEdgeFactory(kraken, krakenUsd, krakenEth, true);
+// let krakenEthUsdFactory = new KrakenEdgeFactory(kraken, krakenEth, krakenUsd, false);
+// let krakenUsdBtcFactory = new GdaxEdgeFactory(kraken, krakenUsd, krakenBtc, true);
+// let krakenBtcUsdFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenUsd, false);
+// let krakenEthBtcFactory = new GdaxEdgeFactory(kraken, krakenEth, krakenBtc, false);
+// let krakenBtcEthFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenEth, true);
+//
+// let gdaxUsdEthFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxEth, true);
+// let gdaxEthUsdFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxUsd, false);
+// let gdaxUsdBtcFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxBtc, true);
+// let gdaxBtcUsdFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxUsd, false);
+// let gdaxEthBtcFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxBtc, false);
+// let gdaxBtcEthFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxEth, true);
 
 let wellsFargoGdaxUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, gdaxUsd, 0, 0, THREE_DAYS);
 let gdaxWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', gdaxUsd, wellsFargoUsd, 0, 0, THREE_DAYS);
@@ -84,18 +84,18 @@ let gdaxKrakenBtc = new CryptoTransferEdgeFactory(gdaxBtc, krakenBtc, 0, 0, ONE_
 let krakenGdaxBtc = new CryptoTransferEdgeFactory(krakenBtc, gdaxBtc, 0, 0, ONE_HOUR);
 
 let edgeFactories = [
-    krakenUsdEthFactory,
-    krakenEthUsdFactory,
-    krakenUsdBtcFactory,
-    krakenBtcUsdFactory,
-    krakenEthBtcFactory,
-    krakenBtcEthFactory,
-    gdaxUsdEthFactory,
-    gdaxEthUsdFactory,
-    gdaxUsdBtcFactory,
-    gdaxBtcUsdFactory,
-    gdaxEthBtcFactory,
-    gdaxBtcEthFactory,
+    // krakenUsdEthFactory,
+    // krakenEthUsdFactory,
+    // krakenUsdBtcFactory,
+    // krakenBtcUsdFactory,
+    // krakenEthBtcFactory,
+    // krakenBtcEthFactory,
+    // gdaxUsdEthFactory,
+    // gdaxEthUsdFactory,
+    // gdaxUsdBtcFactory,
+    // gdaxBtcUsdFactory,
+    // gdaxEthBtcFactory,
+    // gdaxBtcEthFactory,
     wellsFargoGdaxUsdFactory,
     gdaxWellsFargoUsdFactory,
     wellsFargoCharlesSchwabUsdFactory,
@@ -108,11 +108,13 @@ let edgeFactories = [
     krakenGdaxBtc
 ];
 
+
+//Build the graph
 let graph = new Graph(vertices,[]);
 
 edgeFactories.forEach(edgeFactory => {
     edgeFactory.getEdge().then(edge => {
-        console.log(edge, edge.getRateBps()/10000);
+        // console.log(edge, edge.getRateBps()/10000);
         graph.upsertEdge(edge);
     }, err => {
         console.error('error:', err)
@@ -126,6 +128,17 @@ const app = express();
 
 app.get('/api/graph', function (req, res) {
     return res.send(graph.serialize());
+});
+app.get('/api/testDijkstra', function (req, res) {
+    let d = new DijikstrasShortestPathFindingAlgorithm(new EqualCostFunction());
+
+    let from = gdaxUsd;
+    let to = charlesSchwabUsd;
+
+    let path = d.findPath(to, from, graph);
+
+    if (!path) return res.send('null');
+    return res.send(path.serialize());
 });
 app.use('/', express.static('public'));
 
