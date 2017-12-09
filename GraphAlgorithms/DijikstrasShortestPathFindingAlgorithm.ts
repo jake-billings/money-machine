@@ -109,7 +109,7 @@ export class DijikstrasShortestPathFindingAlgorithm extends ShortestPathFindingA
 
             //for each neighbor v (at edge.getFrom().getId()) of u where v is still in Q
             neighbors[u].forEach(edge => {
-                let alt = dist[u] + 1; //this.getCostFunction().getEdgeCost(edge);
+                let alt = dist[u] + this.getCostFunction().getEdgeCost(edge);
                 let v = edge.getTo().getId();
                 if (alt < dist[v]) {
                     dist[v] = alt;
