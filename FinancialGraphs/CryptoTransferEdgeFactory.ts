@@ -2,6 +2,13 @@ import {CurrencyEdgeFactory} from "./CurrencyEdgeFactory";
 import {CurrencyVertex} from "./CurrencyVertex";
 import {CryptoTransferEdge} from "./CryptoTransferEdge";
 
+/**
+ * CryptoTransferEdgeFactory
+ *
+ * Factory class for edges between crypto exchanges and wallets in the cryptocurrency.
+ *
+ * See CurrencyEdgeFactory, CryptoTransferEdge, Exchange
+ */
 export class CryptoTransferEdgeFactory extends CurrencyEdgeFactory {
     private feeAmountBps: number;
     private feeProportionalAmountBps: number;

@@ -1,5 +1,12 @@
 import {Exchange} from "./Exchange";
 
+/**
+ * KrakenExchange
+ *
+ * Kraken
+ *
+ * See Exchange
+ */
 export class KrakenExchange extends Exchange {
     private key: string;
     private secret: string;

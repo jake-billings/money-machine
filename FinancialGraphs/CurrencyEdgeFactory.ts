@@ -4,8 +4,31 @@
 import {CurrencyVertex} from "./CurrencyVertex";
 import {CurrencyEdge} from "./CurrencyEdge";
 
+/**
+ * CurrencyEdgeFactory
+ *
+ * Superclass for all factories of edges;
+ *
+ * EdgeFactories should handle all logic for the creation of edge types.
+ * For instance, the GdaxEdgeFactory handles loading data from GDAX to populate the relevant CurrencyEdge
+ * information.
+ *
+ * Has protected methods to generate each property of the edge.
+ *
+ * May be called multiple times in order to update the exchange price data in the financial graph
+ */
 export abstract class CurrencyEdgeFactory {
+    /**
+     * to
+     *
+     * The destination CurrencyVertex representing the destination of the transaction
+     */
     private to: CurrencyVertex;
+    /**
+     * from
+     *
+     * The destination CurrencyVertex representing the source of the transaction
+     */
     private from: CurrencyVertex;
 
     protected constructor(to: CurrencyVertex, from: CurrencyVertex) {

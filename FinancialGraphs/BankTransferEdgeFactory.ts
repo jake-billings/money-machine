@@ -2,6 +2,13 @@ import {CurrencyEdgeFactory} from "./CurrencyEdgeFactory";
 import {CurrencyVertex} from "./CurrencyVertex";
 import {BankTransferEdge} from "./BankTransferEdge";
 
+/**
+ * BankTransferEdgeFactory
+ *
+ * Factory class for edges between banks in USD.
+ *
+ * See CurrencyEdgeFactory, BankTransferEdge, BankExchange
+ */
 export class BankTransferEdgeFactory extends CurrencyEdgeFactory {
     private feeToDollars: number;
     private feeFromDollars: number;

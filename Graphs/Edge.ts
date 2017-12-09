@@ -1,11 +1,27 @@
-/**
- * Created by jakebillings on 12/7/17.
- */
 import {Vertex} from "./Vertex";
 import {Serializable} from "../Serializable";
 
+/**
+ * Edge
+ *
+ * Serializable
+ *
+ * Represents a directed edge in a Graph object by holding a to vertex and a from vertex
+ *
+ * See Vertex, Graph
+ */
 export abstract class Edge implements Serializable {
+    /**
+     * to
+     *
+     * The destination vertex
+     */
     private to: Vertex;
+    /**
+     * from
+     *
+     * The source vertex
+     */
     private from: Vertex;
 
     public abstract getId(): string;

@@ -1,20 +1,56 @@
-/**
- * Created by jakebillings on 12/7/17.
- */
 import {CurrencyVertex} from "./CurrencyVertex";
 
 import {PublicClient} from 'gdax';
-import {GdaxExchange} from "./GdaxExchange";
+import {GdaxExchange} from "../Exchanges/GdaxExchange";
 import {MarketExchangeCurrencyEdgeFactory} from "./MarketExchangeCurrencyEdgeFactory";
 
-
+/**
+ * Generates GDAX product ids from CurrencyVertex objects
+ *
+ * @param {CurrencyVertex} to
+ * @param {CurrencyVertex} from
+ * @returns {string} a valid GDAX product ID for the two vertices
+ */
 function makeGdaxProductId(to: CurrencyVertex, from: CurrencyVertex) {
     return to.getCurrency().getSymbol() + '-' + from.getCurrency().getSymbol();
 }
 
+/**
+ * GdaxEdgeFactory
+ *
+ * Loads market data to generate edges for Gdax Markets
+ *
+ * See MarketExchangeCurrencyEdgeFactory
+ */
 export class GdaxEdgeFactory extends MarketExchangeCurrencyEdgeFactory {
+    /**
+     * publicClient
+     *
+     * The native node GDAX API client
+     *
+     * Initialized in constructor
+     */
     private publicClient: PublicClient;
+
+    /**
+     * gdaxProductId
+     *
+     * The product id of the market on the GDAX exchange
+     *
+     * Initialized in constructor
+     *
+     * See makeGdaxProductId()
+     */
     private gdaxProductId: string;
+
+    /**
+     * invert
+     *
+     * Gdax only offers markets in ETHUSD form with crypto first and USD later;
+     * Our edges need to represent ETHUSD and USDETH. Invert is used to query the
+     * market that exists, then we simply take the inverse to get the exchange
+     * rate in the opposite direction.
+     */
     private invert: boolean;
 
     public constructor(exchange: GdaxExchange, to: CurrencyVertex, from: CurrencyVertex, invert: boolean) {
