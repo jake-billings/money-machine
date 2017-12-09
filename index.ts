@@ -24,9 +24,6 @@ const ONE_HOUR = 60 * ONE_MINUTE;
 const ONE_DAY = 24 * ONE_HOUR;
 const THREE_DAYS = 3 * ONE_DAY;
 
-//Initialize Banks
-let wellsFargo = new BankExchange('Wells Fargo');
-let charlesSchwab = new BankExchange('Charles Schwab');
 
 //Initialize Exchanges
 let kraken = new KrakenExchange('public','public');
@@ -37,6 +34,11 @@ let gdax = new GdaxExchange();
 let usd = new CurrencyUSD();
 let eth = new CurrencyETH();
 let btc = new CurrencyBTC();
+
+//Initialize Banks
+let wellsFargo = new BankExchange('Wells Fargo', usd);
+let charlesSchwab = new BankExchange('Charles Schwab', usd);
+let fidelity = new BankExchange('Fidelity', usd);
 
 
 //Initialize Nodes
@@ -49,11 +51,12 @@ let gdaxBtc = new CurrencyVertex(btc, gdax);
 
 let wellsFargoUsd = new CurrencyVertex(usd, wellsFargo);
 let charlesSchwabUsd = new CurrencyVertex(usd, charlesSchwab);
+let fidelityUsd = new CurrencyVertex(usd, fidelity);
 
 let vertices = [
     krakenUsd, krakenEth, krakenBtc,
     gdaxUsd, gdaxEth, gdaxBtc,
-    wellsFargoUsd, charlesSchwabUsd
+    wellsFargoUsd, charlesSchwabUsd, fidelityUsd
 ];
 
 //Initialize Edge Factories
@@ -77,6 +80,8 @@ let wellsFargoKrakenUsdFactory = new BankTransferEdgeFactory('WIRE', wellsFargoU
 let krakenWellsFargoUsdFactory = new BankTransferEdgeFactory('WIRE', krakenUsd, wellsFargoUsd, 15, 0, ONE_DAY);
 let wellsFargoCharlesSchwabUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, charlesSchwabUsd, 0, 0, THREE_DAYS);
 let charlesSchwabWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', charlesSchwabUsd, wellsFargoUsd, 0, 0, THREE_DAYS);
+let wellsFargoFidelityUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, fidelityUsd, 0, 0, THREE_DAYS);
+let fidelityWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', fidelityUsd, wellsFargoUsd, 0, 0, THREE_DAYS);
 
 let gdaxKrakenEth = new CryptoTransferEdgeFactory(gdaxEth, krakenEth, 0, 0, ONE_MINUTE);
 let krakenGdaxEth = new CryptoTransferEdgeFactory(krakenEth, gdaxEth, 0, 0, ONE_MINUTE);
@@ -100,6 +105,8 @@ let edgeFactories = [
     gdaxWellsFargoUsdFactory,
     wellsFargoCharlesSchwabUsdFactory,
     charlesSchwabWellsFargoUsdFactory,
+    wellsFargoFidelityUsdFactory,
+    fidelityWellsFargoUsdFactory,
     wellsFargoKrakenUsdFactory,
     krakenWellsFargoUsdFactory,
     gdaxKrakenEth,
