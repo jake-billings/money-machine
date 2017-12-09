@@ -1,0 +1,11 @@
+{
+  "name": "research-web-mapping-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "uniq": "^1.0.1",
+    "vis": "^4.20.1"
+  }
+}
