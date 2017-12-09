@@ -6,9 +6,7 @@ import {Graph} from "../Graphs/Graph";
 /**
  * DijikstrasShortestPathFindingAlgorithm
  *
- * Finds the lowest-cost path between to vertices in a graph.
- *
- * Singleton
+ * Finds the lowest-cost path between to vertices in a graph
  *
  * Algorithm class for Dijikstra's Algorithm
  */
