@@ -48,7 +48,7 @@ export abstract class Graph implements Serializable {
         if (!v) {
             throw new Error('Vertex must be non-null to be upserted into Graph.')
         }
-        for (let i = 0; i<this.vertices.length; i++) {
+        for (let i = 0; i < this.vertices.length; i++) {
             if (this.vertices[i].getId() === v.getId()) {
                 this.vertices[i] = v;
                 return;
@@ -75,7 +75,7 @@ export abstract class Graph implements Serializable {
         if (!e) {
             throw new Error('Edge must be non-null to be upserted into Graph.')
         }
-        for (let i = 0; i<this.edges.length; i++) {
+        for (let i = 0; i < this.edges.length; i++) {
             if (this.edges[i].getId() === e.getId()) {
                 this.edges[i] = e;
                 return;
@@ -97,7 +97,7 @@ export abstract class Graph implements Serializable {
      */
     public containsVertex(v: Vertex) {
         if (!v) throw new Error('v must be non-null Vertex object to check if it is contained in Graph');
-        for (let i = 0; i<this.vertices.length; i++) {
+        for (let i = 0; i < this.vertices.length; i++) {
             if (this.vertices[i].getId() === v.getId()) {
                 return true;
             }
@@ -118,7 +118,7 @@ export abstract class Graph implements Serializable {
      */
     public containsEdge(e: Edge) {
         if (!e) throw new Error('e must be non-null Edge object to check if it is contained in Graph');
-        for (let i = 0; i<this.edges.length; i++) {
+        for (let i = 0; i < this.edges.length; i++) {
             if (this.edges[i].getId() === e.getId()) {
                 return true;
             }
@@ -126,8 +126,42 @@ export abstract class Graph implements Serializable {
         return false;
     }
 
+    /**
+     * toAdjacencyMatrix()
+     *
+     * Return this graph in the form of a 2D boolean adjacency matrix
+     *
+     * Complexity: O(|vertices|^2*|edges|)
+     *
+     * Has much room for optimization.
+     *
+     * @returns {Array<Array<boolean>>} the adjacency matrix
+     */
+    public toAdjacencyMatrix(): Array<Array<number>> {
+        let adjacencyMatrix = [];
+
+        for (let i = 0; i < this.getVertices().length; i++) {
+            adjacencyMatrix.push([]);
+
+            for (let j = 0; j < this.getVertices().length; j++) {
+                let val = 0;
+
+                this.getEdges().forEach(edge => {
+                    if ((edge.getTo().getId() === this.getVertices()[i].getId())
+                        && edge.getFrom().getId() === this.getVertices()[j].getId()) {
+                        val = 1;
+                    }
+                });
+
+                adjacencyMatrix[i].push(val);
+            }
+        }
+
+        return adjacencyMatrix;
+    }
+
     constructor(vertices: Array<Vertex>, edges: Array<Edge>) {
-        if (!(vertices&&edges)) {
+        if (!(vertices && edges)) {
             throw new Error('Both vertices and edges must be non-null arrays objects to create a graph.')
         }
 
@@ -150,10 +184,10 @@ export abstract class Graph implements Serializable {
         return this.vertices;
     }
 
-    public serialize() : object {
+    public serialize(): object {
         return {
-            vertices: this.vertices.map(node=>node.serialize()),
-            edges: this.edges.map(edge=>edge.serialize())
+            vertices: this.vertices.map(node => node.serialize()),
+            edges: this.edges.map(edge => edge.serialize())
         }
     }
 }
