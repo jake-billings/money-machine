@@ -1,7 +1,7 @@
 {
   "name": "money-machine",
   "version": "1.0.0",
-  "description": "",
+  "description": "Money machine is a set of tools for graph-based analysis of the cryptocurrency financial system.",
   "main": "index.js",
   "dependencies": {
     "@types/node": "^8.0.57",
@@ -9,12 +9,14 @@
     "gdax": "^0.4.2",
     "kraken-api": "github:nothingisdead/npm-kraken-api",
     "request": "^2.83.0",
-    "ts-promise": "^1.0.0"
+    "ts-promise": "^1.0.0",
+    "vis": "^4.21.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "jakebillings <jake@jakebillings.com>",
+  "license": "ISC",
+  "repository": "git@github.com:jake-billings/money-machine.git"
 }
