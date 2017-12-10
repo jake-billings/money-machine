@@ -12,8 +12,10 @@ import {Serializable} from "../Serializable";
  * Contains a few utility methods for managing the contents of the graph
  *
  * See Edge, Vertex, GraphAlgorithm
+ *
+ * See test/BasicGraphs/BasicGraph.spec.ts for unit tests
  */
-export class Graph implements Serializable {
+export abstract class Graph implements Serializable {
     /**
      * edges
      *

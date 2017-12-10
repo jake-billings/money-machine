@@ -9,6 +9,8 @@ import {Serializable} from "../Serializable";
  * Represents a directed edge in a Graph object by holding a to vertex and a from vertex
  *
  * See Vertex, Graph
+ *
+ * See test/BasicGraphs/BasicEdge.spec.ts for unit tests
  */
 export abstract class Edge implements Serializable {
     /**

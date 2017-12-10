@@ -49,11 +49,4 @@ export class CurrencyVertex extends Vertex {
     public getLabel(): string {
         return this.getExchange().getName() + ' ' + this.getCurrency().getSymbol();
     }
-
-    public serialize() : Object {
-        return {
-            id: this.getId(),
-            label: this.getLabel()
-        }
-    }
 }
