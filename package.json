@@ -7,6 +7,7 @@
     "@types/node": "^8.0.57",
     "express": "^4.16.2",
     "gdax": "^0.4.2",
+    "jquery": "^3.2.1",
     "kraken-api": "github:nothingisdead/npm-kraken-api",
     "request": "^2.83.0",
     "ts-promise": "^1.0.0",
