@@ -133,6 +133,40 @@ export class CurrencyEdge extends Edge {
      */
     private online: boolean;
 
+    /**
+     * calculateEdgeOutcome()
+     *
+     * Calculates the outcome of a transaction over this edge
+     *
+     * @param {number} amountBps The amount of money to calculate fee cost with;
+     *                        Some fees are proportional to transaction size, so
+     *                        this amount is required
+     *                        in BPS
+     *                        for instance, if it's dollars, this is pips (USD bps)
+     *                        $1,000 = 10,000,000 pips (USD bps)
+     */
+    public calculateEdgeOutcome(amountBps: number) {
+        let runningTotalBps = amountBps;
+
+        //Apply flat from fee
+        runningTotalBps -= this.getFeeFromBps();
+
+        //Apply rate conversion
+        runningTotalBps *= this.getRateBps();
+
+        //Apply from spread
+        runningTotalBps -= runningTotalBps*this.getFeeFromProportionalBps()/10000;
+
+        //Apply to spread
+        runningTotalBps -= runningTotalBps*this.getFeeToProportionalBps()/10000;
+
+        //Apply flat to fee
+        runningTotalBps -= this.getFeeToBps();
+
+
+        return runningTotalBps;
+    }
+
     constructor(to: CurrencyVertex,
                 from: CurrencyVertex,
                 id: string,

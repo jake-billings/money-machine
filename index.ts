@@ -17,6 +17,8 @@ import {BankTransferEdgeFactory} from "./FinancialGraphs/BankTransferEdgeFactory
 import {CryptoTransferEdgeFactory} from "./FinancialGraphs/CryptoTransferEdgeFactory";
 import {DijikstrasShortestPathFindingAlgorithm} from "./GraphAlgorithms/DijikstrasShortestPathFindingAlgorithm";
 import {EqualCostFunction} from "./GraphAlgorithms/CostFunctions/EqualCostFunction";
+import {FeeCostFunction} from "./FinancialGraphs/FinancialCostFunctions/FeeCostFunction";
+import {TimeCostFunction} from "./FinancialGraphs/FinancialCostFunctions/TimeCostFunction";
 
 //Time constants
 const ONE_SECOND = 1;
@@ -57,19 +59,19 @@ let vertices = [
 ];
 
 //Initialize Edge Factories
-// let krakenUsdEthFactory = new KrakenEdgeFactory(kraken, krakenUsd, krakenEth, true);
-// let krakenEthUsdFactory = new KrakenEdgeFactory(kraken, krakenEth, krakenUsd, false);
-// let krakenUsdBtcFactory = new GdaxEdgeFactory(kraken, krakenUsd, krakenBtc, true);
-// let krakenBtcUsdFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenUsd, false);
-// let krakenEthBtcFactory = new GdaxEdgeFactory(kraken, krakenEth, krakenBtc, false);
-// let krakenBtcEthFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenEth, true);
-//
-// let gdaxUsdEthFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxEth, true);
-// let gdaxEthUsdFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxUsd, false);
-// let gdaxUsdBtcFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxBtc, true);
-// let gdaxBtcUsdFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxUsd, false);
-// let gdaxEthBtcFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxBtc, false);
-// let gdaxBtcEthFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxEth, true);
+let krakenUsdEthFactory = new KrakenEdgeFactory(kraken, krakenUsd, krakenEth, true);
+let krakenEthUsdFactory = new KrakenEdgeFactory(kraken, krakenEth, krakenUsd, false);
+let krakenUsdBtcFactory = new GdaxEdgeFactory(kraken, krakenUsd, krakenBtc, true);
+let krakenBtcUsdFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenUsd, false);
+let krakenEthBtcFactory = new GdaxEdgeFactory(kraken, krakenEth, krakenBtc, false);
+let krakenBtcEthFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenEth, true);
+
+let gdaxUsdEthFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxEth, true);
+let gdaxEthUsdFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxUsd, false);
+let gdaxUsdBtcFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxBtc, true);
+let gdaxBtcUsdFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxUsd, false);
+let gdaxEthBtcFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxBtc, false);
+let gdaxBtcEthFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxEth, true);
 
 let wellsFargoGdaxUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, gdaxUsd, 0, 0, THREE_DAYS);
 let gdaxWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', gdaxUsd, wellsFargoUsd, 0, 0, THREE_DAYS);
@@ -84,18 +86,18 @@ let gdaxKrakenBtc = new CryptoTransferEdgeFactory(gdaxBtc, krakenBtc, 0, 0, ONE_
 let krakenGdaxBtc = new CryptoTransferEdgeFactory(krakenBtc, gdaxBtc, 0, 0, ONE_HOUR);
 
 let edgeFactories = [
-    // krakenUsdEthFactory,
-    // krakenEthUsdFactory,
-    // krakenUsdBtcFactory,
-    // krakenBtcUsdFactory,
-    // krakenEthBtcFactory,
-    // krakenBtcEthFactory,
-    // gdaxUsdEthFactory,
-    // gdaxEthUsdFactory,
-    // gdaxUsdBtcFactory,
-    // gdaxBtcUsdFactory,
-    // gdaxEthBtcFactory,
-    // gdaxBtcEthFactory,
+    krakenUsdEthFactory,
+    krakenEthUsdFactory,
+    krakenUsdBtcFactory,
+    krakenBtcUsdFactory,
+    krakenEthBtcFactory,
+    krakenBtcEthFactory,
+    gdaxUsdEthFactory,
+    gdaxEthUsdFactory,
+    gdaxUsdBtcFactory,
+    gdaxBtcUsdFactory,
+    gdaxEthBtcFactory,
+    gdaxBtcEthFactory,
     wellsFargoGdaxUsdFactory,
     gdaxWellsFargoUsdFactory,
     wellsFargoCharlesSchwabUsdFactory,
@@ -130,12 +132,9 @@ app.get('/api/graph', function (req, res) {
     return res.send(graph.serialize());
 });
 app.get('/api/testDijkstra', function (req, res) {
-    let d = new DijikstrasShortestPathFindingAlgorithm(new EqualCostFunction());
+    let d = new DijikstrasShortestPathFindingAlgorithm(new TimeCostFunction());
 
-    let from = gdaxUsd;
-    let to = charlesSchwabUsd;
-
-    let path = d.findPath(to, from, graph);
+    let path = d.findPath(gdaxEth, charlesSchwabUsd, graph);
 
     if (!path) return res.send('null');
     return res.send(path.serialize());
