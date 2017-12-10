@@ -30,6 +30,10 @@ export abstract class Edge implements Serializable {
     public abstract getLabel(): string;
 
     constructor(to: Vertex, from: Vertex) {
+        if (!(to&&from)) {
+            throw new Error('Both to and from must be non-null Vertex objects to create an edge. (!(to&&from))')
+        }
+
         this.to = to;
         this.from = from;
     }

@@ -2,6 +2,7 @@ import {ShortestPathFindingAlgorithm} from "./ShortestPathFindingAlgorithm";
 import {CostFunction} from "./CostFunctions/CostFunction";
 import {Vertex} from "../Graphs/Vertex";
 import {Graph} from "../Graphs/Graph";
+import {BasicGraph} from "../BasicGraphs/BasicGraph";
 
 /**
  * DijikstrasShortestPathFindingAlgorithm
@@ -46,7 +47,10 @@ export class DijikstrasShortestPathFindingAlgorithm extends ShortestPathFindingA
      * @param {Graph} g
      * @returns {Graph} The shortest path between to and from in g
      */
-    public findPath(to: Vertex, from: Vertex, g: Graph): Graph {
+    public findPath(to: Vertex, from: Vertex, g: Graph): BasicGraph {
+        if (!(to&&from)) {
+            throw Error("to and from vertices must both be non-null and in g to find a path");
+        }
         if (!(g.containsVertex(to)&&g.containsVertex(from))) {
             throw Error("to and from vertices must both be contained in g");
         }
@@ -141,6 +145,6 @@ export class DijikstrasShortestPathFindingAlgorithm extends ShortestPathFindingA
             u = prev[u].getFrom().getId();
         }
 
-        return new Graph(vertices, edges);
+        return new BasicGraph(vertices, edges);
     }
 }

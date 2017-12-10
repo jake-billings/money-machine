@@ -45,6 +45,9 @@ export abstract class Graph implements Serializable {
      * @param {Vertex} v The vertex to upsert
      */
     public upsertVertex(v: Vertex) {
+        if (!v) {
+            throw new Error('Vertex must be non-null to be upserted into Graph.')
+        }
         for (let i = 0; i<this.vertices.length; i++) {
             if (this.vertices[i].getId() === v.getId()) {
                 this.vertices[i] = v;
@@ -69,6 +72,9 @@ export abstract class Graph implements Serializable {
      * @param {Edge} e The edge to upsert
      */
     public upsertEdge(e: Edge) {
+        if (!e) {
+            throw new Error('Edge must be non-null to be upserted into Graph.')
+        }
         for (let i = 0; i<this.edges.length; i++) {
             if (this.edges[i].getId() === e.getId()) {
                 this.edges[i] = e;
@@ -90,6 +96,7 @@ export abstract class Graph implements Serializable {
      * @returns {boolean} Is vertex in graph?
      */
     public containsVertex(v: Vertex) {
+        if (!v) throw new Error('v must be non-null Vertex object to check if it is contained in Graph');
         for (let i = 0; i<this.vertices.length; i++) {
             if (this.vertices[i].getId() === v.getId()) {
                 return true;
@@ -110,6 +117,7 @@ export abstract class Graph implements Serializable {
      * @returns {boolean} Is edge in graph?
      */
     public containsEdge(e: Edge) {
+        if (!e) throw new Error('e must be non-null Edge object to check if it is contained in Graph');
         for (let i = 0; i<this.edges.length; i++) {
             if (this.edges[i].getId() === e.getId()) {
                 return true;
@@ -119,6 +127,17 @@ export abstract class Graph implements Serializable {
     }
 
     constructor(vertices: Array<Vertex>, edges: Array<Edge>) {
+        if (!(vertices&&edges)) {
+            throw new Error('Both vertices and edges must be non-null arrays objects to create a graph.')
+        }
+
+        vertices.forEach(vertex => {
+            if (!vertex) throw new Error('All vertices must be non-null to initialize a Graph.');
+        });
+        edges.forEach(edge => {
+            if (!edge) throw new Error('All vertices must be non-null to initialize a Graph.');
+        });
+
         this.edges = edges;
         this.vertices = vertices;
     }
