@@ -123,9 +123,9 @@ export abstract class MarketExchangeCurrencyEdgeFactory extends CurrencyEdgeFact
      * Exchanges operate almost instantly; unlike transfers.
      * If this isn't the case, override in a subclass or change this value.
      *
-     * @returns {number} 1
+     * @returns {number} 5
      */
     protected getTimeEstimateSec() {
-        return 1;
+        return 5;
     }
 }

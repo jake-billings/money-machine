@@ -20,6 +20,13 @@ export const ONE_HOUR = 60 * ONE_MINUTE;
 export const ONE_DAY = 24 * ONE_HOUR;
 export const THREE_DAYS = 3 * ONE_DAY;
 
+export const BTC_CONFIRMATION_TIME = ONE_MINUTE * 70; //~60 minutes, but let's use 70 to be sage
+export const ETH_CONFIRMATION_TIME = ONE_SECOND * 20; //~14 seconds, but let's use 14 to be safe
+export const WIRE_CONFIRMATION_TIME = ONE_HOUR * 48; //~24 hours, but let's use 48 to be safe
+export const ACH_CONFIRMATION_TIME = ONE_DAY * 5; //~4 days, but let's use 5 to be safe; ACH transfers are really slow
+
+export const ETH_TRANSACTION_FEE_BPS = 26; //~$1.20 to be safe
+export const BTC_TRANSACTION_FEE_BPS = 14; //~$22 to be safe
 
 //Initialize Currencies
 export const usd = new CurrencyUSD();
@@ -66,17 +73,18 @@ export const gdaxBtcUsdFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxUsd, fal
 export const gdaxEthBtcFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxBtc, false);
 export const gdaxBtcEthFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxEth, true);
 
-export const wellsFargoGdaxUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, gdaxUsd, 0, 0, THREE_DAYS);
-export const gdaxWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', gdaxUsd, wellsFargoUsd, 0, 0, THREE_DAYS);
-export const wellsFargoKrakenUsdFactory = new BankTransferEdgeFactory('WIRE', wellsFargoUsd, krakenUsd, 0, 25, ONE_DAY);
-export const krakenWellsFargoUsdFactory = new BankTransferEdgeFactory('WIRE', krakenUsd, wellsFargoUsd, 15, 0, ONE_DAY);
-export const wellsFargoCharlesSchwabUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, charlesSchwabUsd, 0, 0, THREE_DAYS);
-export const charlesSchwabWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', charlesSchwabUsd, wellsFargoUsd, 0, 0, THREE_DAYS);
+export const wellsFargoGdaxUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, gdaxUsd, 5, 5, ACH_CONFIRMATION_TIME);
+export const gdaxWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', gdaxUsd, wellsFargoUsd, 5, 5, ACH_CONFIRMATION_TIME);
+export const wellsFargoKrakenUsdFactory = new BankTransferEdgeFactory('WIRE', wellsFargoUsd, krakenUsd, 0, 25, WIRE_CONFIRMATION_TIME);
+export const krakenWellsFargoUsdFactory = new BankTransferEdgeFactory('WIRE', krakenUsd, wellsFargoUsd, 15, 0, WIRE_CONFIRMATION_TIME);
+export const wellsFargoCharlesSchwabUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, charlesSchwabUsd, 5, 5, ACH_CONFIRMATION_TIME);
+export const charlesSchwabWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', charlesSchwabUsd, wellsFargoUsd, 5, 5, ACH_CONFIRMATION_TIME);
 
-export const gdaxKrakenEth = new CryptoTransferEdgeFactory(gdaxEth, krakenEth, 0, 0, ONE_MINUTE);
-export const krakenGdaxEth = new CryptoTransferEdgeFactory(krakenEth, gdaxEth, 0, 0, ONE_MINUTE);
-export const gdaxKrakenBtc = new CryptoTransferEdgeFactory(gdaxBtc, krakenBtc, 0, 0, ONE_HOUR);
-export const krakenGdaxBtc = new CryptoTransferEdgeFactory(krakenBtc, gdaxBtc, 0, 0, ONE_HOUR);
+export const gdaxKrakenEth = new CryptoTransferEdgeFactory(gdaxEth, krakenEth, ETH_TRANSACTION_FEE_BPS, 0, ETH_CONFIRMATION_TIME);
+export const krakenGdaxEth = new CryptoTransferEdgeFactory(krakenEth, gdaxEth, ETH_TRANSACTION_FEE_BPS, 0, ETH_CONFIRMATION_TIME);
+
+export const gdaxKrakenBtc = new CryptoTransferEdgeFactory(gdaxBtc, krakenBtc, BTC_TRANSACTION_FEE_BPS, 0, BTC_CONFIRMATION_TIME);
+export const krakenGdaxBtc = new CryptoTransferEdgeFactory(krakenBtc, gdaxBtc, BTC_TRANSACTION_FEE_BPS, 0, BTC_CONFIRMATION_TIME);
 
 export const edgeFactories = [
     krakenUsdEthFactory,

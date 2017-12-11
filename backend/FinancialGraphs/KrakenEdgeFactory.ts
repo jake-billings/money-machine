@@ -75,7 +75,7 @@ export class KrakenEdgeFactory extends MarketExchangeCurrencyEdgeFactory {
     }
 
     protected getFeeToProportionalBps() {
-        return 0;
+        return 160; //0.16% maker fee for XBT/USD, ETH/XBT, ETH/USD
     }
 
     protected getFeeFromProportionalBps() {
