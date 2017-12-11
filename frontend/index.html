@@ -15,10 +15,24 @@
 </head>
 <body>
 
-<input type="text" id="endpoint" value="graph">
-<button type="button" id="go">Go</button>
-<hr>
-<div id="mynetwork"></div>
+<table>
+    <tr>
+        <td>Map</td>
+        <td>Arbitrage Paths</td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <input type="text" id="endpoint" value="graph">
+            <button type="button" id="go">Go</button>
+            <hr>
+            <div id="mynetwork"></div>
+        </td>
+        <td>
+           <ul id="list">
+           </ul>
+        </td>
+    </tr>
+</table>
 
 <script src="node_modules/jquery/dist/jquery.min.js"></script>
 <script src="node_modules/vis/dist/vis.min.js"></script>
