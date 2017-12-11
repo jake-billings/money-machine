@@ -70,9 +70,9 @@ export class SimpleArbitrageSearchAlgorithm extends ArbitrageSearchAlgorithm {
                 return result.getProfit() > 0;
             })
 
-            //Sort from high to low for good measure
+            //Sort from high to low for good measure (by fitness)
             .sort((a, b) => {
-                return b.getProfit() - a.getProfit();
+                return b.getFitness() - a.getFitness();
             });
     }
 }

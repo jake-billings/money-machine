@@ -1,6 +1,7 @@
 import {SimpleArbitrageSearchAlgorithm} from "./SimpleArbitrageSearchAlgorithm";
 import {JohnsonsCycleFindingAlgorithm} from "../GraphAlgorithms/JohnsonsCycleFindingAlgorithm";
 import {SimpleFinancialPathSimulationAlgorithm} from "./SimpleFinancialPathSimulationAlgorithm";
+import {SpecialSauce} from "./SpecialSauce";
 
 /**
  * DefaultArbitrageSearchAlgorithm
@@ -12,6 +13,6 @@ import {SimpleFinancialPathSimulationAlgorithm} from "./SimpleFinancialPathSimul
  */
 export class DefaultArbitrageSearchAlgorithm extends SimpleArbitrageSearchAlgorithm {
     constructor() {
-        super(new JohnsonsCycleFindingAlgorithm(), new SimpleFinancialPathSimulationAlgorithm());
+        super(new JohnsonsCycleFindingAlgorithm(), new SimpleFinancialPathSimulationAlgorithm(new SpecialSauce()));
     }
 }

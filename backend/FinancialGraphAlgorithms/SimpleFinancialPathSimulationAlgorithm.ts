@@ -4,6 +4,7 @@ import {CurrencyVertex} from "../FinancialGraphs/CurrencyVertex";
 import {FinancialGraph} from "../FinancialGraphs/FinancialGraph";
 import {FinancialPathSimulationAlgorithm} from "./FinancialPathSimulationAlgorithm";
 import {FinancialPathResult} from "./FinancialPathResult";
+import {FinancialPathResultFitnessFunction} from "./FinancialPathResultFitnessFunction";
 
 /**
  * SimpleFinancialPathSimulation
@@ -14,9 +15,17 @@ import {FinancialPathResult} from "./FinancialPathResult";
  * This class is marked simple because it is not an optimized implementation.
  */
 export class SimpleFinancialPathSimulationAlgorithm extends FinancialPathSimulationAlgorithm {
+    /**
+     * The FinancialPathResultFitnessFunction is used to evaluate how "good" a trading path
+     * is. It should account for time, cost, profit, etc. The highest value is the best deal.
+     *
+     * The constructor of the FinancialPathResult calls the method from this object.
+     */
+    private fitnessFunction: FinancialPathResultFitnessFunction;
 
-    constructor() {
+    constructor(fitnessFunction: FinancialPathResultFitnessFunction) {
         super('Financial Path Simulation', '~O(n^2)');
+        this.fitnessFunction = fitnessFunction;
     }
 
     /**
@@ -82,6 +91,7 @@ export class SimpleFinancialPathSimulationAlgorithm extends FinancialPathSimulat
             runningTotalbps,
             runningTotalSec,
             start.getCurrency(),
-            vertex.getCurrency());
+            vertex.getCurrency(),
+            this.fitnessFunction);
     }
 }

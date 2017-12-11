@@ -1,6 +1,7 @@
 import {Serializable} from "../Serializable";
 import {FinancialGraph} from "../FinancialGraphs/FinancialGraph";
 import {Currency} from "../Currencies/Currency";
+import {FinancialPathResultFitnessFunction} from "./FinancialPathResultFitnessFunction";
 
 /**
  * FinancialPathResult
@@ -16,8 +17,9 @@ export class FinancialPathResult implements Serializable {
     private timeSec: number;
     private startCurrency: Currency;
     private endCurrency: Currency;
+    private fitness: number;
 
-    constructor(name: string, path: FinancialGraph, startBps: number, endBps: number, timeSec: number, startCurrency: Currency, endCurrency: Currency) {
+    constructor(name: string, path: FinancialGraph, startBps: number, endBps: number, timeSec: number, startCurrency: Currency, endCurrency: Currency, fitnessFunction: FinancialPathResultFitnessFunction) {
         this.name = name;
         this.path = path;
         this.startBps = startBps;
@@ -25,6 +27,7 @@ export class FinancialPathResult implements Serializable {
         this.timeSec = timeSec;
         this.startCurrency = startCurrency;
         this.endCurrency = endCurrency;
+        this.fitness = fitnessFunction.getFitness(this);
     }
 
     public getPath() : FinancialGraph {
@@ -54,6 +57,9 @@ export class FinancialPathResult implements Serializable {
     public getTimeSec() : number {
         return this.timeSec;
     }
+    public getFitness() : number {
+        return this.fitness;
+    }
 
     public serialize() {
         return {
@@ -62,10 +68,11 @@ export class FinancialPathResult implements Serializable {
             endBps: this.getEndBps(),
             profitBps: this.getProfitBps(),
             profit: this.getProfit(),
+            fitness: this.getFitness(),
             timeSec: this.getTimeSec(),
             path: this.getPath().serialize(),
             startCurrency: this.getStartCurrency().serialize(),
-            endCurrency: this.getEndCurrency().serialize()
+            endCurrency: this.getEndCurrency().serialize(),
         }
     }
 }
