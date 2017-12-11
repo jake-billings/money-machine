@@ -67,7 +67,7 @@ export class SimpleArbitrageSearchAlgorithm extends ArbitrageSearchAlgorithm {
 
             //Filter out the results that lose money
             .filter(result => {
-                return result.getProfit() >= 0;
+                return result.getProfit() > 0;
             })
 
             //Sort from high to low for good measure
