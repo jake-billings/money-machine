@@ -1,6 +1,10 @@
 import {DijikstrasShortestPathFindingAlgorithm} from "../GraphAlgorithms/DijikstrasShortestPathFindingAlgorithm";
 import {TimeCostFunction} from "../FinancialGraphs/FinancialCostFunctions/TimeCostFunction";
 import {buildGraph, charlesSchwabUsd, gdaxEth} from "./ExampleModel";
+import {ArbitrageSearchAlgorithm} from "../FinancialGraphAlgorithms/ArbitrageSearchAlgorithm";
+import {JohnsonsCycleFindingAlgorithm} from "../GraphAlgorithms/JohnsonsCycleFindingAlgorithm";
+import {SimpleArbitrageSearchAlgorithm} from "../FinancialGraphAlgorithms/SimpleArbitrageSearchAlgorithm";
+import {DefaultArbitrageSearchAlgorithm} from "../FinancialGraphAlgorithms/DefaultArbitrageSearchAlgorithm";
 
 const express = require('express');
 
@@ -36,6 +40,15 @@ export function startServer(port: number) {
 
         if (!path) return res.send('null');
         return res.send(path.serialize());
+    });
+
+    app.get('/api/testArbitrage', function (req, res) {
+        let d = new DefaultArbitrageSearchAlgorithm();
+
+        let paths = d.findPaths(graph);
+
+        if (!paths) return res.send('null');
+        return res.send(paths.map(path=>path.serialize()));
     });
 
     //Serve the frontend to anybody who asks

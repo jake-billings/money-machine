@@ -11,7 +11,9 @@
  *
  * Examples: CurrencyBTC (Bitcoin), CurrencyUSD (United States Dollar)
  */
-export abstract class Currency {
+import {Serializable} from "../Serializable";
+
+export abstract class Currency implements Serializable {
     /**
      * name
      *
@@ -41,5 +43,12 @@ export abstract class Currency {
 
     public getSymbol(): string {
         return this.symbol;
+    }
+
+    public serialize(): object {
+        return {
+            name: this.getName(),
+            symbol: this.getSymbol()
+        }
     }
 }

@@ -49,6 +49,7 @@ export class KrakenEdgeFactory extends MarketExchangeCurrencyEdgeFactory {
             this.krakenProductId = makeKrakenProductId(to, from);
         }
         this.client = new KrakenClient(exchange.getKey(), exchange.getSecret());
+        this.invert = invert;
     }
 
     public getRateBps(): Promise<number> {

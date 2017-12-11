@@ -11,6 +11,7 @@ import {Graph} from "../Graphs/Graph";
 import {BankExchange} from "../Exchanges/BankExchange";
 import {BankTransferEdgeFactory} from "../FinancialGraphs/BankTransferEdgeFactory";
 import {CryptoTransferEdgeFactory} from "../FinancialGraphs/CryptoTransferEdgeFactory";
+import {BasicGraph} from "../BasicGraphs/BasicGraph";
 
 //Time constants
 export const ONE_SECOND = 1;
@@ -112,7 +113,7 @@ export const edgeFactories = [
 export function buildGraph() : Promise<Graph> {
     return new Promise<Graph>((resolve, reject)=>{
         //Initialize the graph
-        let graph = new Graph(vertices, []);
+        let graph = new BasicGraph(vertices, []);
 
         //Collect any errors
         let errors = [];

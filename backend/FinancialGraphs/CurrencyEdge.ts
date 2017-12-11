@@ -152,7 +152,7 @@ export class CurrencyEdge extends Edge {
         runningTotalBps -= this.getFeeFromBps();
 
         //Apply rate conversion
-        runningTotalBps *= this.getRateBps();
+        runningTotalBps *= this.getRateBps()/10000;
 
         //Apply from spread
         runningTotalBps -= runningTotalBps*this.getFeeFromProportionalBps()/10000;

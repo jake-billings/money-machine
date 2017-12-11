@@ -176,11 +176,11 @@ export abstract class Graph implements Serializable {
         this.vertices = vertices;
     }
 
-    public getEdges() {
+    public getEdges(): Array<Edge> {
         return this.edges;
     }
 
-    public getVertices() {
+    public getVertices(): Array<Vertex> {
         return this.vertices;
     }
 

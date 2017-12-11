@@ -1,9 +1,8 @@
 import {BasicGraph} from "../BasicGraphs/BasicGraph";
 import {Graph} from "../Graphs/Graph";
 import {Vertex} from "../Graphs/Vertex";
-import {Algorithm} from "../Algorithms/Algorithm";
-import {GraphAlgorithm} from "./GraphAlgorithm";
 import {GraphCircuitConversionAlgorithm} from "./GraphCircuitConversionAlgorithm";
+import {NodeCycleFindingAlgorithm} from "./NodeCycleFindingAlgorithm";
 
 /**
  * JohnsonsCycleFindingAlgorithm
@@ -14,7 +13,7 @@ import {GraphCircuitConversionAlgorithm} from "./GraphCircuitConversionAlgorithm
  *
  * This was really hard.
  */
-export class JohnsonsNodeCycleFindingAlgorithm extends GraphCircuitConversionAlgorithm {
+export class JohnsonsNodeCycleFindingAlgorithm extends GraphCircuitConversionAlgorithm implements NodeCycleFindingAlgorithm {
     constructor() {
         super('Johnson\'s Elementary Circuit Algorithm', 'O(n*e*(c+1))')
     }
