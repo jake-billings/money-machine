@@ -38,6 +38,7 @@ export class SpecialSauce extends FinancialPathResultFitnessFunction {
      */
     public getFitness(result: FinancialPathResult) {
         //todo properly evaluate the fitness of a result
-        return -1*result.getTimeSec(); //todo
+        // return -1*result.getTimeSec(); //todo
+        return result.getProfitBps();
     }
 }

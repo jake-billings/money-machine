@@ -2,6 +2,7 @@ import {CurrencyEdge} from "./CurrencyEdge";
 import {GdaxStream} from "../Data/GdaxStream";
 import {CurrencyVertex} from "./CurrencyVertex";
 import {gdaxStream} from "../Server/ExampleModel";
+import {TradeResult} from "../Trading/TradeResult";
 
 /**
  * GdaxCurrencyEdge
@@ -31,6 +32,8 @@ export class GdaxCurrencyEdge extends CurrencyEdge {
     /**
      * invert
      *
+     * INVERT IS TRUE IF THE TRADE IS CONSIDERED A BUY
+     *
      * Gdax only offers markets in ETHUSD form with crypto first and USD later;
      * Our edges need to represent ETHUSD and USDETH. Invert is used to query the
      * market that exists, then we simply take the inverse to get the exchange
@@ -38,7 +41,7 @@ export class GdaxCurrencyEdge extends CurrencyEdge {
      */
     private invert: boolean;
 
-    constructor(to: CurrencyVertex, from: CurrencyVertex, gdaxStream: GdaxStream, invert: boolean) {
+    constructor(from: CurrencyVertex, to: CurrencyVertex, gdaxStream: GdaxStream, invert: boolean) {
         //Make the edge id
         let id = 'GDAX-STREAM-' + to.getCurrency().getSymbol() + '-' + from.getCurrency().getSymbol();
 
@@ -48,12 +51,16 @@ export class GdaxCurrencyEdge extends CurrencyEdge {
         let label = to.getCurrency().getSymbol() + '-' + from.getCurrency().getSymbol();
 
         //Call super
-        super(to, from, id, label);
+        super(from, to, id, label);
 
         //Initialize property
         this.gdaxStream = gdaxStream;
         this.invert = invert;
 
+        //Consider our usdEth
+        //from usd to eth
+        //thats the ETHUSD market on GDAX (we're backwards in our language), which doesn't need to be inverted
+        //so, we don't invert values, but we do invert the symbol so we get eth-usd for gdax
         //See this.invert
         // Sometimes, we need to switch the product id to query the proper GDAX market
         if (invert) {
@@ -68,20 +75,58 @@ export class GdaxCurrencyEdge extends CurrencyEdge {
      *
      * Return the exchange rate from the GdaxStream market for a given volume
      *
-     * @param {number} volumeBps The trade volume to search the GDAX order book for in bps
+     * @param {number} volumeBps The trade volume to search the GDAX order book for in bps in terms of the start asset
      * @returns {number} the exchange rate of this edge in bps
      */
     public getRateBps(volumeBps: number): number {
-        //Case to and from to CurrencyVertex; see constructor
-        let to = this.getTo() as CurrencyVertex; //See constructor (We only accept CurrencyVertices)
-        let from = this.getFrom() as CurrencyVertex; //See constructor (We only accept CurrencyVertices)
-
+        //Consider our usdEth
+        //from usd to eth
+        //thats the ETHUSD market on GDAX (we're backwards in our language), which doesn't need to be inverted
+        //so, invert is false because the values don't invert, and the symbol is already inverted,
+        //so else executed and we just return the gdax value. Since on the ethusd gdax market,
+        //usd->eth is considered a buy, we are looking for the lowest ask.
+        //consider our ethusd
+        //that's from eth to usd
+        //on gdax, it's still the ETHUSD market. Now it's considered a sell, so we want the highest bid
+        //however, they give prices in usd, so we have to invert the value
         //todo double check this VERY important
+        // let name = this.getFrom().getCurrency().getSymbol() + '->' + this.getTo().getCurrency().getSymbol() + ' at ' + volumeBps / 10000;
+
         if (this.invert) {
-            return 1 / (this.gdaxStream.getLowestAskBpsForVolume(this.productId, volumeBps) / 10000) * 10000;
+            return this.gdaxStream.getLowestAskBpsForVolumeInFromCurrency(this.productId, volumeBps);
         } else {
-            return this.gdaxStream.getHighestBidBpsForVolume(this.productId, volumeBps);
+            return 1 / (this.gdaxStream.getHighestBidBpsForVolumeInFromCurrency(this.productId, volumeBps) / 10000) * 10000;
         }
+    }
+
+
+    /**
+     * executeAuthorizedTrade()
+     *
+     * Executes a trade along this edge at the exchange. This should NEVER be invoked directly. Always use
+     * executeTrade() and a TradeAuthroizer to prevent mistakes.
+     *
+     * WARNING: this is not for the faint of heart.
+     *
+     * WARNING: DO NOT INVOKE DIRECTLY; USE executeTrade() and TradeAuthorizer
+     *
+     * This will execute a trade using real money. There should be safety in place around this method.
+     *
+     * @param {number} amountBps The size of the trade to make
+     * @returns Promise<TradeResult> A promise of a TradeResult object representing the completed trade
+     */
+    protected executeAuthorizedTrade(amountBps: number) : Promise<TradeResult> {
+        //todo implement a real trade lmao
+        return new Promise(((resolve, reject) => {
+            let result = new TradeResult(
+                new Date(),
+                this,
+                amountBps,
+                this.calculateEdgeOutcome(amountBps)
+            );
+            console.log('executing simulated trade on Gdax')
+            return resolve(result);
+        }));
     }
 
     /**
@@ -106,14 +151,14 @@ export class GdaxCurrencyEdge extends CurrencyEdge {
      */
     public getLabel(): string {
         if (this.isOnline()) {
-            let rateBps = this.getRateBps(100); //Get bps for a small volume
+            let rateBps = this.getRateBps(1000); //Get bps for a small volume
             let rateStr;
             if (rateBps < 10000) {
                 rateStr = '1/' + (10000 / rateBps).toFixed(3).toString();
             } else {
                 rateStr = (rateBps / 10000).toFixed(3).toString();
             }
-            return rateStr;
+            return this.getFrom().getCurrency().getSymbol() + this.getTo().getCurrency().getSymbol() + '@' + rateStr;
         }
         return super.getLabel();
     }
@@ -137,7 +182,7 @@ export class GdaxCurrencyEdge extends CurrencyEdge {
     }
 
     public getFeeToProportionalBps(): number {
-        return 0;
+        return 25;
     }
 
     public getFeeFromProportionalBps(): number {

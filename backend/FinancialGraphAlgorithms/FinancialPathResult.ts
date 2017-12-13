@@ -2,6 +2,7 @@ import {Serializable} from "../Serializable";
 import {FinancialGraph} from "../FinancialGraphs/FinancialGraph";
 import {Currency} from "../Currencies/Currency";
 import {FinancialPathResultFitnessFunction} from "./FinancialPathResultFitnessFunction";
+import {CurrencyVertex} from "../FinancialGraphs/CurrencyVertex";
 
 /**
  * FinancialPathResult
@@ -15,19 +16,23 @@ export class FinancialPathResult implements Serializable {
     private startBps: number;
     private endBps: number;
     private timeSec: number;
-    private startCurrency: Currency;
-    private endCurrency: Currency;
+    private startVertex: CurrencyVertex;
+    private endVertex: CurrencyVertex;
     private fitness: number;
 
-    constructor(name: string, path: FinancialGraph, startBps: number, endBps: number, timeSec: number, startCurrency: Currency, endCurrency: Currency, fitnessFunction: FinancialPathResultFitnessFunction) {
+    constructor(name: string, path: FinancialGraph, startBps: number, endBps: number, timeSec: number, startVertex: CurrencyVertex, endVertex: CurrencyVertex, fitnessFunction: FinancialPathResultFitnessFunction) {
         this.name = name;
         this.path = path;
         this.startBps = startBps;
         this.endBps = endBps;
         this.timeSec = timeSec;
-        this.startCurrency = startCurrency;
-        this.endCurrency = endCurrency;
-        this.fitness = fitnessFunction.getFitness(this);
+        this.startVertex = startVertex;
+        this.endVertex = endVertex;
+
+        //Fitness function is optional rn todo
+        if (fitnessFunction) {
+            this.fitness = fitnessFunction.getFitness(this);
+        }
     }
 
     public getPath() : FinancialGraph {
@@ -42,11 +47,11 @@ export class FinancialPathResult implements Serializable {
     public getEndBps() : number {
         return this.endBps;
     }
-    public getStartCurrency() : Currency {
-        return this.startCurrency;
+    public getStartVertex() : CurrencyVertex {
+        return this.startVertex;
     }
-    public getEndCurrency() : Currency {
-        return this.endCurrency;
+    public getEndVertex() : CurrencyVertex {
+        return this.endVertex;
     }
     public getProfitBps() : number {
         return this.getEndBps() - this.getStartBps();
@@ -71,8 +76,8 @@ export class FinancialPathResult implements Serializable {
             fitness: this.getFitness(),
             timeSec: this.getTimeSec(),
             path: this.getPath().serialize(),
-            startCurrency: this.getStartCurrency().serialize(),
-            endCurrency: this.getEndCurrency().serialize(),
+            startVertex: this.getStartVertex().serialize(),
+            endVertex: this.getEndVertex().serialize(),
         }
     }
 }

@@ -18,7 +18,7 @@ export const ONE_HOUR = 60 * ONE_MINUTE;
 export const ONE_DAY = 24 * ONE_HOUR;
 export const THREE_DAYS = 3 * ONE_DAY;
 
-export const BTC_CONFIRMATION_TIME = ONE_MINUTE * 70; //~60 minutes, but let's use 70 to be sage
+export const BTC_CONFIRMATION_TIME = ONE_MINUTE * 70; //~60 minutes, but let's use 70 to be safe
 export const ETH_CONFIRMATION_TIME = ONE_SECOND * 20; //~14 seconds, but let's use 14 to be safe
 export const WIRE_CONFIRMATION_TIME = ONE_HOUR * 48; //~24 hours, but let's use 48 to be safe
 export const ACH_CONFIRMATION_TIME = ONE_DAY * 5; //~4 days, but let's use 5 to be safe; ACH transfers are really slow
@@ -41,13 +41,13 @@ export const kraken = new KrakenExchange('public', 'public');
 export const gdax = new GdaxExchange();
 
 //Initialize Vertices
-export const gdaxUsd = new CurrencyVertex(usd, gdax);
-export const gdaxEth = new CurrencyVertex(eth, gdax);
-export const gdaxBtc = new CurrencyVertex(btc, gdax);
-export const gdaxLtc = new CurrencyVertex(ltc, gdax);
+export const gdaxUsd = new CurrencyVertex(usd, gdax, 10000000); //$1,000
+export const gdaxEth = new CurrencyVertex(eth, gdax, 15625); //~$1,000
+export const gdaxBtc = new CurrencyVertex(btc, gdax, 588); //~$1,000
+export const gdaxLtc = new CurrencyVertex(ltc, gdax, 25000); //~$1,000
 
-export const wellsFargoUsd = new CurrencyVertex(usd, wellsFargo);
-export const charlesSchwabUsd = new CurrencyVertex(usd, charlesSchwab);
+export const wellsFargoUsd = new CurrencyVertex(usd, wellsFargo, 10000000); //$1000
+export const charlesSchwabUsd = new CurrencyVertex(usd, charlesSchwab, 10000000); //$1000
 
 export const vertices = [
     gdaxUsd, gdaxEth, gdaxBtc, gdaxLtc,
@@ -67,18 +67,17 @@ export const gdaxStream = new GdaxStream([
 ]);
 
 //Initialize Edges
-export const gdaxUsdEth = new GdaxCurrencyEdge(gdaxUsd, gdaxEth, gdaxStream, true);
-export const gdaxEthUsd = new GdaxCurrencyEdge(gdaxEth, gdaxUsd, gdaxStream, false);
-export const gdaxUsdBtc = new GdaxCurrencyEdge(gdaxUsd, gdaxBtc, gdaxStream, true);
-export const gdaxBtcUsd = new GdaxCurrencyEdge(gdaxBtc, gdaxUsd, gdaxStream, false);
+export const gdaxUsdEth = new GdaxCurrencyEdge(gdaxUsd, gdaxEth, gdaxStream, false);
+export const gdaxEthUsd = new GdaxCurrencyEdge(gdaxEth, gdaxUsd, gdaxStream, true);
+export const gdaxUsdBtc = new GdaxCurrencyEdge(gdaxUsd, gdaxBtc, gdaxStream, false);
+export const gdaxBtcUsd = new GdaxCurrencyEdge(gdaxBtc, gdaxUsd, gdaxStream, true);
+export const gdaxUsdLtc = new GdaxCurrencyEdge(gdaxUsd, gdaxLtc, gdaxStream, false);
+export const gdaxLtcUsd = new GdaxCurrencyEdge(gdaxLtc, gdaxUsd, gdaxStream, true);
 
-export const gdaxUsdLtc = new GdaxCurrencyEdge(gdaxUsd, gdaxLtc, gdaxStream, true);
-export const gdaxLtcUsd = new GdaxCurrencyEdge(gdaxLtc, gdaxUsd, gdaxStream, false);
-
-export const gdaxBtcEth = new GdaxCurrencyEdge(gdaxBtc, gdaxEth, gdaxStream, true);
-export const gdaxEthBtc = new GdaxCurrencyEdge(gdaxEth, gdaxBtc, gdaxStream, false);
-export const gdaxBtcLtc = new GdaxCurrencyEdge(gdaxBtc, gdaxLtc, gdaxStream, true);
-export const gdaxLtcBtc = new GdaxCurrencyEdge(gdaxLtc, gdaxBtc, gdaxStream, false);
+export const gdaxBtcEth = new GdaxCurrencyEdge(gdaxBtc, gdaxEth, gdaxStream, false);
+export const gdaxEthBtc = new GdaxCurrencyEdge(gdaxEth, gdaxBtc, gdaxStream, true);
+export const gdaxBtcLtc = new GdaxCurrencyEdge(gdaxBtc, gdaxLtc, gdaxStream, false);
+export const gdaxLtcBtc = new GdaxCurrencyEdge(gdaxLtc, gdaxBtc, gdaxStream, true);
 
 // export const wellsFargoGdaxUsd = new BankTransferEdge('ACH',wellsFargoUsd, gdaxUsd, 5, 5, ACH_CONFIRMATION_TIME);
 // export const gdaxWellsFargoUsd = new BankTransferEdge('ACH', gdaxUsd, wellsFargoUsd, 5, 5, ACH_CONFIRMATION_TIME);
@@ -106,4 +105,8 @@ export const edges = [
     gdaxBtcLtc
 ];
 
-export const exampleModelGraph = new FinancialGraph(vertices, edges);
+export const loaders = [
+    gdaxStream
+];
+
+export const exampleModelGraph = new FinancialGraph(vertices, edges, loaders);

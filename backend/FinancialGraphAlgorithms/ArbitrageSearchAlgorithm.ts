@@ -18,7 +18,17 @@ export abstract class ArbitrageSearchAlgorithm extends FinancialGraphAlgorithm {
      * Finds all subgraphs in parent graph g where money can be made through arbitrage.
      *
      * @param {Graph} g the parent graph; this is your financial model (see ExampleModel)
-     * @returns {Array<BasicGraph>} All paths where money can be made in the financial model
+     * @returns {Array<FinancialPathResult>} All paths where money can be made in the financial model
      */
     public abstract findPaths(g: FinancialGraph) : Array<FinancialPathResult>;
+
+    /**
+     * findBestPath()
+     *
+     * Finds the highest ranked of all subgraphs in parent graph g where money can be made through arbitrage.
+     *
+     * @param {Graph} g the parent graph; this is your financial model (see ExampleModel)
+     * @returns {FinancialPathResult} All paths where money can be made in the financial model
+     */
+    public abstract findBestPath(g: FinancialGraph) : FinancialPathResult;
 }

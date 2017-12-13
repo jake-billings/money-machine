@@ -90,8 +90,8 @@ export class SimpleFinancialPathSimulationAlgorithm extends FinancialPathSimulat
             startingAmountBps,
             runningTotalbps,
             runningTotalSec,
-            start.getCurrency(),
-            vertex.getCurrency(),
+            start,
+            vertex,
             this.fitnessFunction);
     }
 }

@@ -1,4 +1,5 @@
 import * as WebSocket from 'ws';
+import {Loader} from "./Loader";
 
 /**
  * GDAX_WSS_URL
@@ -13,7 +14,7 @@ const GDAX_WSS_URL = 'wss://ws-feed.gdax.com';
  * GdaxStream is a caching layer that accepts the updates from the gdax websocket
  * api and maintains an up-to-date order book.
  */
-export class GdaxStream {
+export class GdaxStream extends Loader {
     /**
      * ws
      *
@@ -54,6 +55,8 @@ export class GdaxStream {
     private productIds: Array<string>;
 
     constructor(productIds: Array<string>) {
+        super();
+
         //Start disconnected; this is set to true when the socket opens
         this.connected = false;
 
@@ -132,6 +135,7 @@ export class GdaxStream {
     private acceptSnapshot(snapshot: any) {
         console.log('Received Level2 Snapshot from Gdax for ', snapshot.product_id);
         this.orderBooks[snapshot.product_id] = snapshot;
+        this.fireOnLoadIfReady();
     }
 
     /**
@@ -212,6 +216,33 @@ export class GdaxStream {
     }
 
     /**
+     * getLowestAskBpsForVolumeInFromCurrency()
+     *
+     * Major key; part of what makes us money
+     *
+     * This method finds the best available asking price on in a given GDAX order book IN VOLUME OF THE "FROM" CURRENCY
+     *
+     * @param {string} orderBook The GDAX productId of the order book to check
+     * @param {number} volumeInFromCurrencyBps The volume in the from currency of the order book to search for asks for
+     * @returns {number} the best price in currency bps
+     */
+    public getLowestAskBpsForVolumeInFromCurrency(orderBook: string, volumeInFromCurrencyBps: number): number {
+        let lowestMatchingAskPriceBps = Infinity;
+
+        this.orderBooks[orderBook].asks.forEach(ask => {
+            let askPriceBps = parseFloat(ask[0])*10000;
+            let askVolumeInFromCurrencyBps = parseFloat(ask[0])*parseFloat(ask[1])*10000;
+
+
+            if ((askPriceBps < lowestMatchingAskPriceBps) && (askVolumeInFromCurrencyBps > volumeInFromCurrencyBps)) {
+                lowestMatchingAskPriceBps = askPriceBps;
+            }
+        });
+
+        return lowestMatchingAskPriceBps;
+    }
+
+    /**
      * getHighestBidBpsForVolume()
      *
      * Major key; part of what makes us money
@@ -239,6 +270,33 @@ export class GdaxStream {
     }
 
     /**
+     * getHighestBidBpsForVolumeInFromCurrency()
+     *
+     * Major key; part of what makes us money
+     *
+     * This method finds the best available bidding price on in a given GDAX order book IN VOLUME OF THE "FROM" CURRENCY
+     *
+     * @param {string} orderBook The GDAX productId of the order book to check
+     * @param {number} volumeInFromCurrencyBps The volume in currency of the order book to search for asks for IN VOLUME OF THE "FROM" CURRENCY
+     * @returns {number} the best price in currency bps
+     */
+    public getHighestBidBpsForVolumeInFromCurrency(orderBook: string, volumeInFromCurrencyBps: number): number {
+        let highestMatchingBidPriceBps = 0;
+
+        this.orderBooks[orderBook].bids.forEach(bid => {
+            let bidPriceBps = parseFloat(bid[0])*10000;
+            let bidVolumeInFromCurrencyBps = parseFloat(bid[0])*parseFloat(bid[1])*10000;
+
+
+            if ((bidPriceBps > highestMatchingBidPriceBps) && (bidVolumeInFromCurrencyBps > volumeInFromCurrencyBps)) {
+                highestMatchingBidPriceBps = bidPriceBps;
+            }
+        });
+
+        return highestMatchingBidPriceBps;
+    }
+
+    /**
      * hasOrderBook()
      *
      * Checks if a given order book is loaded; true only if the order book has loaded
@@ -248,6 +306,17 @@ export class GdaxStream {
      */
     public hasOrderBook(book: string): boolean {
         return Object.keys(this.orderBooks).indexOf(book) >= 0;
+    }
+
+    /**
+     * Fires onload callbacks if order book has loaded
+     *
+     * @returns {boolean} if callbacks were called
+     */
+    private fireOnLoadIfReady() : boolean {
+        if (Object.keys(this.orderBooks).length !== this.productIds.length) return false;
+        this.fireOnLoad();
+        return true;
     }
 
     public isConnected(): boolean {

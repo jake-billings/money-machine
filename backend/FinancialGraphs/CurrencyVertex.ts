@@ -28,18 +28,34 @@ export class CurrencyVertex extends Vertex {
      */
     private exchange: Exchange;
 
-    public constructor(currency: Currency, exchange: Exchange) {
+    /**
+     * startAmountBps
+     *
+     * The starting trade size if a trade is executed from this node
+     *
+     * In the currency the node represents
+     *
+     * Example: 10,000 pips (USD bps)  = $1
+     */
+    private startAmountBps: number;
+
+    public constructor(currency: Currency, exchange: Exchange, startAmountBps: number) {
         super();
         this.currency = currency;
         this.exchange = exchange;
+        this.startAmountBps = startAmountBps;
     }
 
-    public getCurrency() : Currency {
+    public getCurrency(): Currency {
         return this.currency;
     }
 
-    public getExchange() : Exchange {
+    public getExchange(): Exchange {
         return this.exchange;
+    }
+
+    public getStartAmountBps(): number {
+        return this.startAmountBps;
     }
 
     public getId(): string {
@@ -48,5 +64,14 @@ export class CurrencyVertex extends Vertex {
 
     public getLabel(): string {
         return this.getExchange().getName() + ' ' + this.getCurrency().getSymbol();
+    }
+
+    public serialize() : Object {
+        return {
+            id: this.getId(),
+            label: this.getLabel(),
+            startAmountBps: this.getStartAmountBps(),
+            currency: this.getCurrency().serialize()
+        }
     }
 }

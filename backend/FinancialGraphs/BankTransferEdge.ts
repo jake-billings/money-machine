@@ -24,8 +24,8 @@ export class BankTransferEdge extends BasicCurrencyEdge {
     private productName: string;
 
     constructor(productName: string,
-                to: CurrencyVertex,
                 from: CurrencyVertex,
+                to: CurrencyVertex,
                 id: string,
                 label: string,
                 feeToDollars: number,

@@ -61,18 +61,34 @@ export class SimpleArbitrageSearchAlgorithm extends ArbitrageSearchAlgorithm {
         //Simulate each cycle to get a result
             .map(path => {
                 let startVertex = path.getVertices()[0];
-                let startAmountBps = 50000000;
-                return this.financialPathSimulator.calculateExpectedResult(path, startVertex, startAmountBps);
+                return this.financialPathSimulator.calculateExpectedResult(path, startVertex, startVertex.getStartAmountBps());
             })
 
             //Filter out the results that lose money
             .filter(result => {
-                return result.getProfit() > 0;
+                // return result.getProfit() > 0;
+                return true;
             })
 
             //Sort from high to low for good measure (by fitness)
             .sort((a, b) => {
                 return b.getFitness() - a.getFitness();
             });
+    }
+
+    /**
+     * findBestPath()
+     *
+     * Finds the highest ranked of all subgraphs in parent graph g where money can be made through arbitrage.
+     *
+     * Uses the fitness evaluated by the financial path simulation and its fitness function
+     *
+     * Calls findPaths() and returns the first result since the array is already sorted by fitness.
+     *
+     * @param {Graph} g the parent graph; this is your financial model (see ExampleModel)
+     * @returns {FinancialPathResult} All paths where money can be made in the financial model
+     */
+    public findBestPath(g: FinancialGraph) : FinancialPathResult {
+        return this.findPaths(g)[0]; //We know these will be sorted by fitness, so just return the first one.
     }
 }
