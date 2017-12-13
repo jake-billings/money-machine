@@ -5,14 +5,16 @@
   "main": "index.js",
   "dependencies": {
     "@types/node": "^8.0.57",
+    "@types/websocket": "0.0.35",
     "chai": "^4.1.2",
     "express": "^4.16.2",
     "gdax": "^0.4.2",
     "jquery": "^3.2.1",
-    "kraken-api": "github:nothingisdead/npm-kraken-api",
+    "kraken-api": "^1.0.0",
     "request": "^2.83.0",
     "ts-promise": "^1.0.0",
-    "vis": "^4.21.0"
+    "vis": "^4.21.0",
+    "ws": "^3.3.2"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,5 +1,6 @@
 import {CurrencyVertex} from "./CurrencyVertex";
 import {CurrencyEdge} from "./CurrencyEdge";
+import {BasicCurrencyEdge} from "./BasicCurrencyEdge";
 
 /**
  * CryptoTransferEdge
@@ -12,7 +13,7 @@ import {CurrencyEdge} from "./CurrencyEdge";
  *
  * See CurrencyEdge
  */
-export class BankTransferEdge extends CurrencyEdge {
+export class BankTransferEdge extends BasicCurrencyEdge {
     /**
      * productName
      *

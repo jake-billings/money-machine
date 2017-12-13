@@ -4,14 +4,12 @@ import {CurrencyVertex} from "../FinancialGraphs/CurrencyVertex";
 import {CurrencyUSD} from "../Currencies/CurrencyUSD";
 import {CurrencyETH} from "../Currencies/CurrencyETH";
 import {CurrencyBTC} from "../Currencies/CurrencyBTC";
-import {KrakenEdgeFactory} from "../FinancialGraphs/KrakenEdgeFactory";
+import {CurrencyLTC} from "../Currencies/CurrencyLTC";
 import {GdaxExchange} from "../Exchanges/GdaxExchange";
-import {GdaxEdgeFactory} from "../FinancialGraphs/GdaxEdgeFactory";
-import {Graph} from "../Graphs/Graph";
 import {BankExchange} from "../Exchanges/BankExchange";
-import {BankTransferEdgeFactory} from "../FinancialGraphs/BankTransferEdgeFactory";
-import {CryptoTransferEdgeFactory} from "../FinancialGraphs/CryptoTransferEdgeFactory";
-import {BasicGraph} from "../BasicGraphs/BasicGraph";
+import {GdaxCurrencyEdge} from "../FinancialGraphs/GdaxCurrencyEdge";
+import {GdaxStream} from "../Data/GdaxStream";
+import {FinancialGraph} from "../FinancialGraphs/FinancialGraph";
 
 //Time constants
 export const ONE_SECOND = 1;
@@ -32,6 +30,7 @@ export const BTC_TRANSACTION_FEE_BPS = 14; //~$22 to be safe
 export const usd = new CurrencyUSD();
 export const eth = new CurrencyETH();
 export const btc = new CurrencyBTC();
+export const ltc = new CurrencyLTC();
 
 //Initialize Banks
 export const wellsFargo = new BankExchange('Wells Fargo', usd);
@@ -41,109 +40,70 @@ export const charlesSchwab = new BankExchange('Charles Schwab', usd);
 export const kraken = new KrakenExchange('public', 'public');
 export const gdax = new GdaxExchange();
 
-//Initialize Nodes
-export const krakenUsd = new CurrencyVertex(usd, kraken);
-export const krakenEth = new CurrencyVertex(eth, kraken);
-export const krakenBtc = new CurrencyVertex(btc, kraken);
+//Initialize Vertices
 export const gdaxUsd = new CurrencyVertex(usd, gdax);
 export const gdaxEth = new CurrencyVertex(eth, gdax);
 export const gdaxBtc = new CurrencyVertex(btc, gdax);
+export const gdaxLtc = new CurrencyVertex(ltc, gdax);
 
 export const wellsFargoUsd = new CurrencyVertex(usd, wellsFargo);
 export const charlesSchwabUsd = new CurrencyVertex(usd, charlesSchwab);
 
 export const vertices = [
-    krakenUsd, krakenEth, krakenBtc,
-    gdaxUsd, gdaxEth, gdaxBtc,
+    gdaxUsd, gdaxEth, gdaxBtc, gdaxLtc,
     wellsFargoUsd, charlesSchwabUsd
 ];
 
-//Initialize Edge Factories
-export const krakenUsdEthFactory = new KrakenEdgeFactory(kraken, krakenUsd, krakenEth, true);
-export const krakenEthUsdFactory = new KrakenEdgeFactory(kraken, krakenEth, krakenUsd, false);
-export const krakenUsdBtcFactory = new GdaxEdgeFactory(kraken, krakenUsd, krakenBtc, true);
-export const krakenBtcUsdFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenUsd, false);
-export const krakenEthBtcFactory = new GdaxEdgeFactory(kraken, krakenEth, krakenBtc, false);
-export const krakenBtcEthFactory = new GdaxEdgeFactory(kraken, krakenBtc, krakenEth, true);
+//Initialize Live Exchange Data
+export const gdaxStream = new GdaxStream([
+    //USD markets
+    'ETH-USD',
+    'BTC-USD',
+    'LTC-USD',
 
-export const gdaxUsdEthFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxEth, true);
-export const gdaxEthUsdFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxUsd, false);
-export const gdaxUsdBtcFactory = new GdaxEdgeFactory(gdax, gdaxUsd, gdaxBtc, true);
-export const gdaxBtcUsdFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxUsd, false);
-export const gdaxEthBtcFactory = new GdaxEdgeFactory(gdax, gdaxEth, gdaxBtc, false);
-export const gdaxBtcEthFactory = new GdaxEdgeFactory(gdax, gdaxBtc, gdaxEth, true);
+    //Btc markets
+    'ETH-BTC',
+    'LTC-BTC'
+]);
 
-export const wellsFargoGdaxUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, gdaxUsd, 5, 5, ACH_CONFIRMATION_TIME);
-export const gdaxWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', gdaxUsd, wellsFargoUsd, 5, 5, ACH_CONFIRMATION_TIME);
-export const wellsFargoKrakenUsdFactory = new BankTransferEdgeFactory('WIRE', wellsFargoUsd, krakenUsd, 0, 25, WIRE_CONFIRMATION_TIME);
-export const krakenWellsFargoUsdFactory = new BankTransferEdgeFactory('WIRE', krakenUsd, wellsFargoUsd, 15, 0, WIRE_CONFIRMATION_TIME);
-export const wellsFargoCharlesSchwabUsdFactory = new BankTransferEdgeFactory('ACH', wellsFargoUsd, charlesSchwabUsd, 5, 5, ACH_CONFIRMATION_TIME);
-export const charlesSchwabWellsFargoUsdFactory = new BankTransferEdgeFactory('ACH', charlesSchwabUsd, wellsFargoUsd, 5, 5, ACH_CONFIRMATION_TIME);
+//Initialize Edges
+export const gdaxUsdEth = new GdaxCurrencyEdge(gdaxUsd, gdaxEth, gdaxStream, true);
+export const gdaxEthUsd = new GdaxCurrencyEdge(gdaxEth, gdaxUsd, gdaxStream, false);
+export const gdaxUsdBtc = new GdaxCurrencyEdge(gdaxUsd, gdaxBtc, gdaxStream, true);
+export const gdaxBtcUsd = new GdaxCurrencyEdge(gdaxBtc, gdaxUsd, gdaxStream, false);
 
-export const gdaxKrakenEth = new CryptoTransferEdgeFactory(gdaxEth, krakenEth, ETH_TRANSACTION_FEE_BPS, 0, ETH_CONFIRMATION_TIME);
-export const krakenGdaxEth = new CryptoTransferEdgeFactory(krakenEth, gdaxEth, ETH_TRANSACTION_FEE_BPS, 0, ETH_CONFIRMATION_TIME);
+export const gdaxUsdLtc = new GdaxCurrencyEdge(gdaxUsd, gdaxLtc, gdaxStream, true);
+export const gdaxLtcUsd = new GdaxCurrencyEdge(gdaxLtc, gdaxUsd, gdaxStream, false);
 
-export const gdaxKrakenBtc = new CryptoTransferEdgeFactory(gdaxBtc, krakenBtc, BTC_TRANSACTION_FEE_BPS, 0, BTC_CONFIRMATION_TIME);
-export const krakenGdaxBtc = new CryptoTransferEdgeFactory(krakenBtc, gdaxBtc, BTC_TRANSACTION_FEE_BPS, 0, BTC_CONFIRMATION_TIME);
+export const gdaxBtcEth = new GdaxCurrencyEdge(gdaxBtc, gdaxEth, gdaxStream, true);
+export const gdaxEthBtc = new GdaxCurrencyEdge(gdaxEth, gdaxBtc, gdaxStream, false);
+export const gdaxBtcLtc = new GdaxCurrencyEdge(gdaxBtc, gdaxLtc, gdaxStream, true);
+export const gdaxLtcBtc = new GdaxCurrencyEdge(gdaxLtc, gdaxBtc, gdaxStream, false);
 
-export const edgeFactories = [
-    krakenUsdEthFactory,
-    krakenEthUsdFactory,
-    krakenUsdBtcFactory,
-    krakenBtcUsdFactory,
-    krakenEthBtcFactory,
-    krakenBtcEthFactory,
-    gdaxUsdEthFactory,
-    gdaxEthUsdFactory,
-    gdaxUsdBtcFactory,
-    gdaxBtcUsdFactory,
-    gdaxEthBtcFactory,
-    gdaxBtcEthFactory,
-    wellsFargoGdaxUsdFactory,
-    gdaxWellsFargoUsdFactory,
-    wellsFargoCharlesSchwabUsdFactory,
-    charlesSchwabWellsFargoUsdFactory,
-    wellsFargoKrakenUsdFactory,
-    krakenWellsFargoUsdFactory,
-    gdaxKrakenEth,
-    krakenGdaxEth,
-    gdaxKrakenBtc,
-    krakenGdaxBtc
+// export const wellsFargoGdaxUsd = new BankTransferEdge('ACH',wellsFargoUsd, gdaxUsd, 5, 5, ACH_CONFIRMATION_TIME);
+// export const gdaxWellsFargoUsd = new BankTransferEdge('ACH', gdaxUsd, wellsFargoUsd, 5, 5, ACH_CONFIRMATION_TIME);
+// export const wellsFargoKrakenUsd = new BankTransferEdge('WIRE', wellsFargoUsd, krakenUsd, 0, 25, WIRE_CONFIRMATION_TIME);
+// export const krakenWellsFargoUsd = new BankTransferEdge('WIRE', krakenUsd, wellsFargoUsd, 15, 0, WIRE_CONFIRMATION_TIME);
+// export const wellsFargoCharlesSchwabUsd = new BankTransferEdge('ACH', wellsFargoUsd, charlesSchwabUsd, 5, 5, ACH_CONFIRMATION_TIME);
+// export const charlesSchwabWellsFargoUsd = new BankTransferEdge('ACH', charlesSchwabUsd, wellsFargoUsd, 5, 5, ACH_CONFIRMATION_TIME);
+
+// export const gdaxKrakenEth = new CryptoTransferEdge(gdaxEth, krakenEth, ETH_TRANSACTION_FEE_BPS, 0, ETH_CONFIRMATION_TIME);
+// export const krakenGdaxEth = new CryptoTransferEdge(krakenEth, gdaxEth, ETH_TRANSACTION_FEE_BPS, 0, ETH_CONFIRMATION_TIME);
+//
+// export const gdaxKrakenBtc = new CryptoTransferEdge(gdaxBtc, krakenBtc, BTC_TRANSACTION_FEE_BPS, 0, BTC_CONFIRMATION_TIME);
+// export const krakenGdaxBtc = new CryptoTransferEdge(krakenBtc, gdaxBtc, BTC_TRANSACTION_FEE_BPS, 0, BTC_CONFIRMATION_TIME);
+
+export const edges = [
+    gdaxUsdEth,
+    gdaxEthUsd,
+    gdaxUsdBtc,
+    gdaxBtcUsd,
+    gdaxEthBtc,
+    gdaxLtcUsd,
+    gdaxUsdLtc,
+    gdaxBtcEth,
+    gdaxLtcBtc,
+    gdaxBtcLtc
 ];
 
-/**
- * buildGraph()
- *
- * Returns a promise that will resolve to the complete financial graph model once all factories load live data
- *
- * @returns {Promise<Graph>} A promise of a complete financial graph model
- */
-export function buildGraph() : Promise<Graph> {
-    return new Promise<Graph>((resolve, reject)=>{
-        //Initialize the graph
-        let graph = new BasicGraph(vertices, []);
-
-        //Collect any errors
-        let errors = [];
-
-        //Tell all the edge factories to load their data and make edges
-        let edgePromises = edgeFactories.map(edgeFactory => {
-            return edgeFactory.getEdge().then(edge => {
-                //Add the edges to the graph when they load
-                return graph.upsertEdge(edge);
-            }, err => {
-                return errors.push(err);
-            });
-        });
-
-        //Resolve the main promise and handle any errors that occured
-        return Promise.all(edgePromises).then(() => {
-            if (errors.length>0) {
-                return reject(errors);
-            }
-            return resolve(graph);
-        },err=>{
-            reject(err);
-        })
-    })
-}
+export const exampleModelGraph = new FinancialGraph(vertices, edges);
